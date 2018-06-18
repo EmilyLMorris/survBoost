@@ -241,20 +241,20 @@ plot.boosting <- function(x, type="frequency")
     x_axis <- c(1:x$mstop)
     plot_data <- data.frame(cbind(x_axis,y))
 
-    ggplot(plot_data, aes(x_axis)) +
-      geom_line(aes(y = y, colour = "y"))  + theme_bw() + theme(legend.position="none", text=element_text(family="Times", size=16)) +
-      xlab("Number of boosting iterations") + ylab("Proportion of variables selected")
+    ggplot2::ggplot(plot_data, ggplot2::aes(x_axis)) +
+      ggplot2::geom_line(ggplot2::aes(y = y, colour = "y"))  + ggplot2::theme_bw() + ggplot2::theme(legend.position="none", text=element_text(family="Times", size=16)) +
+      ggplot2::xlab("Number of boosting iterations") + ggplot2::ylab("Proportion of variables selected")
   } else if(type == "coefficients"){
     require(reshape2)
     require(directlabels)
     selection_df <- rbind(rep(0,ncol(selection_df)), selection_df)
     x_axis <- c(0:x$mstop)
     plot_data <- data.frame(x_axis, selection_df)
-    long <- melt(plot_data, id.vars = c("x_axis"))
-    ggplot(long, aes(x=x_axis, y=value, group=variable)) +
-      geom_line() + theme_bw() + theme( text=element_text(family="Times", size=16)) +
-      ylab("Coefficient Estimate") + xlab("Number of iterations") +
-      geom_dl(aes(label = variable), method = list(dl.combine("last.points"), cex = 1.2))
+    long <- reshape2::melt(plot_data, id.vars = c("x_axis"))
+    ggplot2::ggplot(long, ggplot2::aes(x=x_axis, y=value, group=variable)) +
+      ggplot2::geom_line() + ggplot2::theme_bw() + ggplot2::theme( text=element_text(family="Times", size=16)) +
+      ggplot2::ylab("Coefficient Estimate") + ggplot2::xlab("Number of iterations") +
+      ggplot2::geom_dl(ggplot2::aes(label = variable), method = list(directlabels::dl.combine("last.points"), cex = 1.2))
   }
 }
 
@@ -306,7 +306,7 @@ modelfit.boosting <- function(x, all_beta=NULL){
 # POST SELECTION INFERENCE
 inference.boosting <- function(fmla, data){
   #require(survival)
-  fit <- coxph(fmla, data=data)
+  fit <- survival::coxph(fmla, data=data)
   print(summary(fit))
 }
 

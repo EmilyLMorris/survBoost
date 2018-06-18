@@ -24,21 +24,21 @@ strata.boosting <- function(x, survival.time, split="median"){
 
   if(is.vector(x) & !is.list(x)){ # check that x is a vector - just one variable
     if(is.factor(x)){
-      p <- ggplot(data, aes(x=x, y=survival.time)) + geom_boxplot() + theme_bw()+
-        stat_summary(fun.data = give.n, geom = "text") + ylab("Survival Time")  + xlab(NULL)
+      p <- ggplot::ggplot(data, ggplot::aes(x=x, y=survival.time)) + ggplot::geom_boxplot() + ggplot::theme_bw() +
+        ggplot::stat_summary(fun.data = give.n, geom = "text") + ggplot::ylab("Survival Time") + ggplot::xlab(NULL)
       print(p)
 
       # print summary table
-      ddply(data, .(x), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
+      plyr::ddply(data, .(x), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
             Median=quantile(survival.time, 0.5), Q3=quantile(survival.time, 0.75), Max=quantile(survival.time, 1))
     }
     else if(length(unique(x))<10){ # limit is 10 strata
-      p <- ggplot(data, aes(x=as.factor(x), y=survival.time)) + geom_boxplot() + theme_bw()+
-        stat_summary(fun.data = give.n, geom = "text") + ylab("Survival Time") + xlab(NULL)
+      p <- ggplot::ggplot(data, ggplot::aes(x=as.factor(x), y=survival.time)) + ggplot::geom_boxplot() + ggplot::theme_bw()+
+        ggplot::stat_summary(fun.data = give.n, geom = "text") + ggplot::ylab("Survival Time") + ggplot::xlab(NULL)
       print(p)
 
       # print summary table of quartiles
-      ddply(data, .(as.factor(x)), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
+      plyr::ddply(data, .(as.factor(x)), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
             Median=quantile(survival.time, 0.5), Q3=quantile(survival.time, 0.75), Max=quantile(survival.time, 1))
 
     }
@@ -47,12 +47,12 @@ strata.boosting <- function(x, survival.time, split="median"){
         med <- median(data$x)
         x.split <- rep(0,length(x))
         x.split[which(x > med)] <- 1
-        p <- ggplot(data, aes(x=as.factor(x.split), y=survival.time)) + geom_boxplot() + theme_bw()+
-          stat_summary(fun.data = give.n, geom = "text") + ylab("Survival Time") + xlab(NULL) +
-          scale_x_discrete(labels=c("0" = "< Median", "1" = "> Median"))
+        p <- ggplot::ggplot(data, ggplot::aes(x=as.factor(x.split), y=survival.time)) + ggplot::geom_boxplot() + ggplot::theme_bw()+
+          ggplot::stat_summary(fun.data = give.n, geom = "text") + ggplot::ylab("Survival Time") + ggplot::xlab(NULL) +
+          ggplot::scale_x_discrete(labels=c("0" = "< Median", "1" = "> Median"))
         print(p)
 
-        ddply(data, .(as.factor(x.split)), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
+        plyr::ddply(data, .(as.factor(x.split)), summarise,  Min=quantile(survival.time, 0), Q1=quantile(survival.time, 0.25),
               Median=quantile(survival.time, 0.5), Q3=quantile(survival.time, 0.75), Max=quantile(survival.time, 1))
       }
     }

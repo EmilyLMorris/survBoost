@@ -260,5 +260,5 @@ static const R_CallMethodDef CallEntries[] = {
 
 RcppExport void R_init_SurvBoost(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
+    (void) R_useDynamicSymbols(dll, FALSE);
 }

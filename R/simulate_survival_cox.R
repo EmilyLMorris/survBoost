@@ -27,7 +27,7 @@ require(mvtnorm)
 #' @examples
 #' toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=F)
 #' any(duplicated(toyData$time))
-#' z <- as.matrix(dat[,-c(1,2,3)])
+#' z <- as.matrix(toyData[,-c(1,2,3)])
 #'
 #'
 simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_scale=NULL, base_hazard_shape=NULL,
@@ -84,7 +84,7 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
         return(y)
 	} # a function to normalize a vector to have l2 norm to be 1
 	if(is.null(z_matrix))
-	{z <- rmvnorm(n, mean=rep(0,p), sigma=cov_z)}
+	{z <- mvtnorm::rmvnorm(n, mean=rep(0,p), sigma=cov_z)}
 	else
 	{
 		if(ncol(z_matrix) != p)

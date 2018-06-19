@@ -38,13 +38,10 @@ using namespace Rcpp;
     double L1_max = 0.0;
     for (int j = 0; j < p; j++) {
       if(p_adj!=0){
-        #
-        # added code
         if(j==0){
           j = p_adj;
         }
         L1.zeros();
-        #
         arma::mat S1_temp = arma::zeros(n_sample,p_adj);
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {

@@ -19,10 +19,5 @@ Generates a plot and table. Table displays the quartiles of the groups of x. A b
 \description{
 This function assists in evaluating whether the supplied variable is useful for stratification when fitting a cox proportional hazards model.
 }
-\examples{
-data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-strata.boosting(data$strata_idx, data$time)
-
-}
 \keyword{boosting}
 \keyword{gradient}

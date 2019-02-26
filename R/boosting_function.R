@@ -21,22 +21,22 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   df <- stats::get_all_vars(formula, data=data) # takes a few seconds
   output <- list(formula=formula, data=data, rate=rate, censoring_type = censoring_type)
   data_name <- deparse(substitute(data))
-
+  
   Call <- match.call()
   time <- df[,1]
   delta <- df[,2]
-
+  
   special <- c("strata")
   indx <- match(c("formula", "data", "na.action"), names(Call), nomatch = 0)
   temp <- Call[c(1, indx)]
   temp[[1L]] <- quote(stats::model.frame)
-
+  
   temp$formula <- stats::terms(formula, special, data = data) # slightly slow
   coxenv <- new.env(parent = environment(formula))
   environment(temp$formula) <- coxenv
   mf <- eval(temp, parent.frame())
   Terms <- stats::terms(mf)
-
+  
   if (length(attr(Terms, "variables")) > 2) {
     ytemp <- formula[1:2]
     xtemp <- formula[-2]
@@ -46,20 +46,20 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   contrast.arg <- NULL
   stemp<- survival::untangle.specials(Terms, "strata", 1)
   if (length(stemp$vars) > 0) {
-      dropterms <- stemp$terms
-      temppred <- attr(terms, "predvars")
-      Terms2 <- Terms[-dropterms]
-      if (!is.null(temppred)) {
-        attr(Terms2, "predvars") <- temppred[-(1 + dropterms)]
-      }
-      attr(Terms2,"intercept") <- 0
-      X <- stats::model.matrix(Terms2, mf, constrasts = contrast.arg)
-      renumber <- match(colnames(attr(Terms2, "factors")),
-                        colnames(attr(Terms, "factors")))
-      attr(X, "assign") <- c(0, renumber)[1 + attr(X, "assign")]
+    dropterms <- stemp$terms
+    temppred <- attr(terms, "predvars")
+    Terms2 <- Terms[-dropterms]
+    if (!is.null(temppred)) {
+      attr(Terms2, "predvars") <- temppred[-(1 + dropterms)]
+    }
+    attr(Terms2,"intercept") <- 0
+    X <- stats::model.matrix(Terms2, mf, constrasts = contrast.arg)
+    renumber <- match(colnames(attr(Terms2, "factors")),
+                      colnames(attr(Terms, "factors")))
+    attr(X, "assign") <- c(0, renumber)[1 + attr(X, "assign")]
   }
   else  X <- stats::model.matrix(Terms, mf, contrasts = contrast.arg)
-
+  
   strats <- attr(Terms, "specials")$strata
   if (length(strats)) {
     stemp <- untangle.specials(Terms, "strata", 1)
@@ -75,13 +75,13 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   else{
     X_cov <- as.matrix(df[,-c(1,2,3)]) # need to also remove strata from X if it exists in df
   }
-
+  
   adj_variables <- 0
   sample <- c(0:(length(delta)-1))
   num_strata = length(unique(strats))
-
+  
   output <- list(data=data, rate=rate, censoring_type = censoring_type)
- # if want to input m_stop
+  # if want to input m_stop
   if(!is.null(control) & is.null(control_method)){
     result <- boosting_stratify_core(sample, delta, strats, num_strata, X_cov, control, rate, adj_variables)
     output$selection_df <- result
@@ -101,7 +101,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
     output$beta <- result[mstop_cv,]
     output$mstop = mstop_cv
     output$cvrisk <- cv_result$cvrisk
-
+    
   }
   # if # selected specified
   else if(control_method == "num_selected"){
@@ -193,23 +193,23 @@ print.boosting = function(x){
 summary.boosting <- function(x)
 {
   cat("Call:\n", deparse(x$call), "\n")
-
+  
   reduced_beta <- x$coefficients[which(x$coefficients!=0)]
   cat("\n", "Coefficients:", "\n")
   print(reduced_beta)
-
+  
   cat("\n", "Number of iterations: ", x$mstop, "\n")
   output <- list(reduced_beta, x$mstop)
-
+  
   df_coxph <- x[[1]]
   df_coxph$strata <- x$strata
-
+  
   strata.col <- which(sapply(x[[1]], identical, x$strata)==TRUE)
   strata.name <- names(x[[1]])[strata.col]
   strata.fmla <- paste("strata(",strata.name ,")")
   fmla_reduced <- stats::as.formula(paste("Surv(time,delta) ~ ", paste(c(names(reduced_beta), strata.fmla), collapse= "+")))
   cat("\n", "Formula: ", deparse(fmla_reduced), "\n")
-
+  
   output$formula <- fmla_reduced
   names(output) <- c("Coefficients", "Number of iterations", "Formula")
   return(output)
@@ -232,17 +232,17 @@ plot.boosting <- function(x, type="frequency")
 {
   require(ggplot2)
   selection_df <- x$selection_df
-
+  
   if(type == "frequency"){
     selection_df[which(selection_df!=0)] <- 1
     y <- rowMeans(selection_df)
     x_axis <- c(1:x$mstop)
     plot_data <- data.frame(cbind(x_axis,y))
-
+    
     ggplot2::ggplot(plot_data, ggplot2::aes(x_axis)) +
       ggplot2::geom_line(ggplot2::aes(y = y, colour = "y"))  + ggplot2::theme_bw() + ggplot2::theme(legend.position="none", text=ggplot2::element_text(family="Times", size=16)) +
       ggplot2::xlab("Number of boosting iterations") + ggplot2::ylab("Proportion of variables selected")  
-    } else if(type == "coefficients"){
+  } else if(type == "coefficients"){
     require(reshape2)
     require(directlabels)
     selection_df <- rbind(rep(0,ncol(selection_df)), selection_df)
@@ -272,7 +272,7 @@ modelfit.boosting <- function(x, all_beta=NULL){
   cat("Call:\n", deparse(x$call), "\n")
   cat("\n", "data: ", names(x)[1], "\n") # data name should be first in the list of boosting output
   cat("\n", "n = ", dim(x[[1]])[1],"\n", "Number of events = ", sum(x$delta),"\n",
-   #   "Number of strata = ", length(unique(x$data["strata"])), "\n",
+      #   "Number of strata = ", length(unique(x$data["strata"])), "\n",
       "Number of boosting iterations: mstop = ", x$mstop, "\n", "Step size = ", x$rate)
   cat("\n")
   if(is.null(all_beta)){
@@ -281,8 +281,8 @@ modelfit.boosting <- function(x, all_beta=NULL){
     print(reduced_beta)
   }
   else{
-  cat("\n", "Coefficients:", "\n")
-  print(x$coefficients)
+    cat("\n", "Coefficients:", "\n")
+    print(x$coefficients)
   }
 }
 
@@ -332,13 +332,13 @@ inference.boosting <- function(x){ # (fmla, data)
 predict.boosting <- function(x, new_data=NULL){
   # x is a boosting_core object
   if(is.null(new_data)) new_data <- x$data
-
+  
   var_selected <- names(which(x$coefficients!=0))
   sample_avg <- colMeans(new_data[var_selected])
-
+  
   #calculate exp(Xb) for sample average
   hazard_avg <- exp(sample_avg %*% x$coefficients[which(x$coefficients!=0)])
-
+  
   predict <- NULL
   for(i in 1:nrow(new_data)){
     #calculate exp(X'b) for individual
@@ -347,8 +347,5 @@ predict.boosting <- function(x, new_data=NULL){
     predict[i] <- hazard_ind/hazard_avg
   }
   return(predict)
-
+  
 }
-
-
-

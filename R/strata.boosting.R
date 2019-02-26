@@ -17,30 +17,30 @@ strata.boosting <- function(x, survival.time, split="median"){
   library(ggplot2)
   library(plyr)
   data <- data.frame(x, survival.time)
-
+  
   give.n <- function(x){
     return(c(y = mean(x), label = length(x)))
   }
-
+  
   if(is.vector(x) & !is.list(x)){ # check that x is a vector - just one variable
     if(is.factor(x)){
       p <- ggplot2::ggplot(data, ggplot2::aes(x=x, y=survival.time)) + ggplot2::geom_boxplot() + ggplot2::theme_bw() +
         ggplot2::stat_summary(fun.data = give.n, geom = "text") + ggplot2::ylab("Survival Time") + ggplot2::xlab(NULL)
       print(p)
-
+      
       # print summary table
       plyr::ddply(data, .(x), plyr::summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
-            Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
+                  Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
     }
     else if(length(unique(x))<10){ # limit is 10 strata
       p <- ggplot2::ggplot(data, ggplot2::aes(x=as.factor(x), y=survival.time)) + ggplot2::geom_boxplot() + ggplot2::theme_bw()+
         ggplot2::stat_summary(fun.data = give.n, geom = "text") + ggplot2::ylab("Survival Time") + ggplot2::xlab(NULL)
       print(p)
-
+      
       # print summary table of quartiles
       plyr::ddply(data, .(as.factor(x)), summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
-            Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
-
+                  Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
+      
     }
     else{ # continuous case
       if(split=="median"){
@@ -51,12 +51,12 @@ strata.boosting <- function(x, survival.time, split="median"){
           ggplot2::stat_summary(fun.data = give.n, geom = "text") + ggplot2::ylab("Survival Time") + ggplot2::xlab(NULL) +
           ggplot2::scale_x_discrete(labels=c("0" = "< Median", "1" = "> Median"))
         print(p)
-
+        
         plyr::ddply(data, .(as.factor(x.split)), summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
-              Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
+                    Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
       }
     }
   }
   # suppose that x is a vector of variables - may want a combination
-
+  
 }

@@ -17,7 +17,8 @@
 #' boosting_core(formula, data, rate=0.1, control_method="num_selected", control_parameter=5)
 #'
 boosting_core <- function(formula, data, rate, control=500, control_method=NULL, control_parameter=NULL, censoring_type = "right" ){
-  df <- get_all_vars(formula, data=data) # takes a few seconds
+  require(survival)
+  df <- stats::get_all_vars(formula, data=data) # takes a few seconds
   output <- list(formula=formula, data=data, rate=rate, censoring_type = censoring_type)
   data_name <- deparse(substitute(data))
 
@@ -25,18 +26,16 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   time <- df[,1]
   delta <- df[,2]
 
-  require(survival)
-
   special <- c("strata")
   indx <- match(c("formula", "data", "na.action"), names(Call), nomatch = 0)
   temp <- Call[c(1, indx)]
   temp[[1L]] <- quote(stats::model.frame)
 
-  temp$formula <- terms(formula, special, data = data) # slightly slow
+  temp$formula <- stats::terms(formula, special, data = data) # slightly slow
   coxenv <- new.env(parent = environment(formula))
   environment(temp$formula) <- coxenv
   mf <- eval(temp, parent.frame())
-  Terms <- terms(mf)
+  Terms <- stats::terms(mf)
 
   if (length(attr(Terms, "variables")) > 2) {
     ytemp <- formula[1:2]
@@ -45,7 +44,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
     #  warning("a variable appears on both the left and right sides of the formula")
   }
   contrast.arg <- NULL
-  stemp<- untangle.specials(Terms, "strata", 1)
+  stemp<- survival::untangle.specials(Terms, "strata", 1)
   if (length(stemp$vars) > 0) {
       dropterms <- stemp$terms
       temppred <- attr(terms, "predvars")
@@ -54,19 +53,19 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
         attr(Terms2, "predvars") <- temppred[-(1 + dropterms)]
       }
       attr(Terms2,"intercept") <- 0
-      X <- model.matrix(Terms2, mf, constrasts = contrast.arg)
+      X <- stats::model.matrix(Terms2, mf, constrasts = contrast.arg)
       renumber <- match(colnames(attr(Terms2, "factors")),
                         colnames(attr(Terms, "factors")))
       attr(X, "assign") <- c(0, renumber)[1 + attr(X, "assign")]
   }
-  else  X <- model.matrix(Terms, mf, contrasts = contrast.arg)
+  else  X <- stats::model.matrix(Terms, mf, contrasts = contrast.arg)
 
   strats <- attr(Terms, "specials")$strata
   if (length(strats)) {
     stemp <- untangle.specials(Terms, "strata", 1)
     if (length(stemp$vars) == 1)
       strata.keep <- mf[[stemp$vars]]
-    else strata.keep <- strata(mf[, stemp$vars], shortlabel = TRUE)
+    else strata.keep <- survival::strata(mf[, stemp$vars], shortlabel = TRUE)
     strats <- as.numeric(strata.keep)
   }
   if(is.null(strats)){
@@ -164,18 +163,17 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   else{
     names(output$coefficients) <- colnames(X)
   }
-
+  output$formula <- formula
   output$call <- Call
   output$delta <- delta
   names(output)[[1]] <- data_name
-
   class(output) <- "boosting"
   output
 }
 
 
 print.boosting = function(x){
-  x = x[c("Call", "Coefficients")]
+  x = x[c("call", "coefficients")]
   NextMethod()
 }
 
@@ -209,7 +207,7 @@ summary.boosting <- function(x)
   strata.col <- which(sapply(x[[1]], identical, x$strata)==TRUE)
   strata.name <- names(x[[1]])[strata.col]
   strata.fmla <- paste("strata(",strata.name ,")")
-  fmla_reduced <- as.formula(paste("Surv(time,delta) ~ ", paste(c(names(reduced_beta), strata.fmla), collapse= "+")))
+  fmla_reduced <- stats::as.formula(paste("Surv(time,delta) ~ ", paste(c(names(reduced_beta), strata.fmla), collapse= "+")))
   cat("\n", "Formula: ", deparse(fmla_reduced), "\n")
 
   output$formula <- fmla_reduced
@@ -228,7 +226,7 @@ summary.boosting <- function(x)
 #' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' plot.boosting(boosting.output)
-#' plot.boosting(boosting.out, type="coefficients")
+#' plot.boosting(boosting.output, type="coefficients")
 #'
 plot.boosting <- function(x, type="frequency")
 {
@@ -241,20 +239,20 @@ plot.boosting <- function(x, type="frequency")
     x_axis <- c(1:x$mstop)
     plot_data <- data.frame(cbind(x_axis,y))
 
-    ggplot(plot_data, aes(x_axis)) +
-      geom_line(aes(y = y, colour = "y"))  + theme_bw() + theme(legend.position="none", text=element_text(family="Times", size=16)) +
-      xlab("Number of boosting iterations") + ylab("Proportion of variables selected")
-  } else if(type == "coefficients"){
+    ggplot2::ggplot(plot_data, ggplot2::aes(x_axis)) +
+      ggplot2::geom_line(ggplot2::aes(y = y, colour = "y"))  + ggplot2::theme_bw() + ggplot2::theme(legend.position="none", text=ggplot2::element_text(family="Times", size=16)) +
+      ggplot2::xlab("Number of boosting iterations") + ggplot2::ylab("Proportion of variables selected")  
+    } else if(type == "coefficients"){
     require(reshape2)
     require(directlabels)
     selection_df <- rbind(rep(0,ncol(selection_df)), selection_df)
     x_axis <- c(0:x$mstop)
     plot_data <- data.frame(x_axis, selection_df)
-    long <- melt(plot_data, id.vars = c("x_axis"))
-    ggplot(long, aes(x=x_axis, y=value, group=variable)) +
-      geom_line() + theme_bw() + theme( text=element_text(family="Times", size=16)) +
-      ylab("Coefficient Estimate") + xlab("Number of iterations") +
-      geom_dl(aes(label = variable), method = list(dl.combine("last.points"), cex = 1.2))
+    long <- reshape2::melt(plot_data, id.vars = c("x_axis"))
+    ggplot2::ggplot(long, ggplot2::aes(x=x_axis, y=value, group=variable)) +
+      ggplot2::geom_line() + ggplot2::theme_bw() + ggplot2::theme( text= ggplot2::element_text(family="Times", size=16)) +
+      ggplot2::ylab("Coefficient Estimate") + ggplot2::xlab("Number of iterations") +
+      directlabels::geom_dl(ggplot2::aes(label = variable), method = list(directlabels::dl.combine("last.points"), cex = 1.2))
   }
 }
 
@@ -271,8 +269,6 @@ plot.boosting <- function(x, type="frequency")
 #' modelfit.boosting(boosting.output)
 #'
 modelfit.boosting <- function(x, all_beta=NULL){
-  #names(x$coefficients) <- paste("V",c(1:length(x$coefficients)),sep="") # CHANGE IF THEY HAVE NAMES?
-  #print(names(x$coefficients))
   cat("Call:\n", deparse(x$call), "\n")
   cat("\n", "data: ", names(x)[1], "\n") # data name should be first in the list of boosting output
   cat("\n", "n = ", dim(x[[1]])[1],"\n", "Number of events = ", sum(x$delta),"\n",
@@ -304,12 +300,19 @@ modelfit.boosting <- function(x, all_beta=NULL){
 #' inference.boosting(boosting.output)
 #'
 # POST SELECTION INFERENCE
-inference.boosting <- function(fmla, data){
-  #require(survival)
-  fit <- coxph(fmla, data=data)
+inference.boosting <- function(x){ # (fmla, data)
+  # x is a boosting object
+  data = data.frame(x$data) 
+  data$strata = x$strata
+  variables.selected <- names(x$coefficients)[which(abs(x$coefficients) > x$rate)]
+  if(!is.null(boosting.output$strata)){
+    fmla = formula(paste(x$formula[2] , "~ ",   paste(c(variables.selected, "strata(strata)"), collapse = "+")))
+  }else{
+    fmla = formula(paste(x$formula[2] , "~ ", paste(variables.selected, collapse = " + ")))
+  }
+  fit <- survival::coxph(fmla, data=data)
   print(summary(fit))
 }
-
 
 #' Boosting predict function
 #'

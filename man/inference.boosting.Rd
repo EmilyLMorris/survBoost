@@ -4,12 +4,12 @@
 \alias{inference.boosting}
 \title{Boosting inference function}
 \usage{
-inference.boosting(fmla, data)
+inference.boosting(x)
 }
 \arguments{
-\item{data}{data.frame containing variables included in the formula.}
-
 \item{formula}{a formula object obtained from the summary of the boosting_core function.}
+
+\item{data}{data.frame containing variables included in the formula.}
 }
 \description{
 This function provides post selection inference.

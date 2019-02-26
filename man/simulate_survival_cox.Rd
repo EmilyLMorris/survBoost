@@ -5,10 +5,11 @@
 \title{Simulating survival data}
 \usage{
 simulate_survival_cox(true_beta, base_hazard = "auto",
-  base_hazard_scale = NULL, base_hazard_shape = NULL, num_strata = 10,
-  input_strata_size = 50, z_matrix = NULL, cov_structure = "diag",
-  block_size = 1, rho = NULL, censor_dist = "unif", censor_const = 5,
-  tau = Inf, normalized = F)
+  base_hazard_scale = NULL, base_hazard_shape = NULL,
+  num_strata = 10, input_strata_size = 50, z_matrix = NULL,
+  cov_structure = "diag", block_size = 1, rho = NULL,
+  censor_dist = "unif", censor_const = 5, tau = Inf,
+  normalized = F)
 }
 \arguments{
 \item{true_beta}{Contains true parameter values to simulate from.}
@@ -20,9 +21,9 @@ a matrix with survival time (time), event indicator (delta), stratification vari
 This function allows you to simulate stratified survival data.
 }
 \examples{
-toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=F)
+toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=FALSE)
 any(duplicated(toyData$time))
-z <- as.matrix(dat[,-c(1,2,3)])
+z <- as.matrix(toyData[,-c(1,2,3)])
 
 
 }

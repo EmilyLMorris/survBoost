@@ -25,9 +25,9 @@ require(mvtnorm)
 #' @keywords gradient boosting
 #' @export
 #' @examples
-#' toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=F)
+#' toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=FALSE)
 #' any(duplicated(toyData$time))
-#' z <- as.matrix(dat[,-c(1,2,3)])
+#' z <- as.matrix(toyData[,-c(1,2,3)])
 #'
 #'
 simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_scale=NULL, base_hazard_shape=NULL,
@@ -36,7 +36,7 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
 {
 	p <- length(true_beta)
 	if(length(input_strata_size) == 1)
-	{strata_size <- rpois(num_strata, lambda=input_strata_size)}
+	{strata_size <- stats::rpois(num_strata, lambda=input_strata_size)}
 	else
 	{
 		if(length(input_strata_size) == num_strata)
@@ -84,7 +84,7 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
         return(y)
 	} # a function to normalize a vector to have l2 norm to be 1
 	if(is.null(z_matrix))
-	{z <- rmvnorm(n, mean=rep(0,p), sigma=cov_z)}
+	{z <- mvtnorm::rmvnorm(n, mean=rep(0,p), sigma=cov_z)}
 	else
 	{
 		if(ncol(z_matrix) != p)
@@ -97,7 +97,7 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
 
 	if(base_hazard == "auto") # randomly generated for each strata as distinct exponential r.v.'s
 	{
-		scale <- exp(rnorm(num_strata, mean=0, sd=0.4))
+		scale <- exp(stats::rnorm(num_strata, mean=0, sd=0.4))
 		scale_subject <- rep(scale, strata_size) # dim = n
 		shape_subject <- rep(1, n)
 	}
@@ -120,7 +120,7 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
 
 	## generate latent event time ##
 
-	uvec <- runif(n, 0, 1)
+	uvec <- stats::runif(n, 0, 1)
 	latent_t <- (-log(uvec)/(scale_subject*as.vector(exp(z%*%true_beta))))^{1/shape_subject}
 
 	## generate censoring time ##
@@ -131,11 +131,11 @@ simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_sca
 		{
 			stop("In uniform censoring distribution, please specify consor_dist to be larger than 1.")
 		}
-		latent_c <- runif(n, 1, censor_const)
+		latent_c <- stats::runif(n, 1, censor_const)
 	}
 	else if(censor_dist == "exp")
 	{
-		latent_c <- rexp(n, rate=censor_const)
+		latent_c <- stats::rexp(n, rate=censor_const)
 	}
 	else stop("Invalid parameter for censoring distribution.")
 	pre_censoring <- ifelse(latent_c < tau, latent_c, tau)

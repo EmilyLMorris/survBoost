@@ -24,17 +24,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// reverse_vec
-arma::vec reverse_vec(arma::vec x);
-RcppExport SEXP _SurvBoost_reverse_vec(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(reverse_vec(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // boosting_stratify_path
 arma::mat boosting_stratify_path(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::mat& X, int& M_stop, double& rate, int adj_variables);
 RcppExport SEXP _SurvBoost_boosting_stratify_path(SEXP sampleSEXP, SEXP deltaSEXP, SEXP facilitySEXP, SEXP num_facilitySEXP, SEXP XSEXP, SEXP M_stopSEXP, SEXP rateSEXP, SEXP adj_variablesSEXP) {
@@ -68,20 +57,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double& >::type rate(rateSEXP);
     Rcpp::traits::input_parameter< int >::type adj_variables(adj_variablesSEXP);
     rcpp_result_gen = Rcpp::wrap(boosting_stratify_numselected1(sample, delta, facility, num_facility, X, num_selected, rate, adj_variables));
-    return rcpp_result_gen;
-END_RCPP
-}
-// loglik
-arma::vec loglik(int n, arma::vec delta, arma::mat z, arma::vec beta);
-RcppExport SEXP _SurvBoost_loglik(SEXP nSEXP, SEXP deltaSEXP, SEXP zSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglik(n, delta, z, beta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -123,138 +98,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// dloglik_stratify2_Cpp
-arma::rowvec dloglik_stratify2_Cpp(int n, arma::vec delta, arma::mat z, arma::vec beta, arma::vec facility, int number_facility);
-RcppExport SEXP _SurvBoost_dloglik_stratify2_Cpp(SEXP nSEXP, SEXP deltaSEXP, SEXP zSEXP, SEXP betaSEXP, SEXP facilitySEXP, SEXP number_facilitySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type facility(facilitySEXP);
-    Rcpp::traits::input_parameter< int >::type number_facility(number_facilitySEXP);
-    rcpp_result_gen = Rcpp::wrap(dloglik_stratify2_Cpp(n, delta, z, beta, facility, number_facility));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cvkfold
-arma::mat cvkfold(int n, int k);
-RcppExport SEXP _SurvBoost_cvkfold(SEXP nSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(cvkfold(n, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// normalize
-arma::vec normalize(arma::vec x);
-RcppExport SEXP _SurvBoost_normalize(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(normalize(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// boosting_stratify_core_update
-List boosting_stratify_core_update(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::mat& X, int& M_start, arma::rowvec& beta_start, arma::vec& L1_start, arma::vec& L2_start, arma::vec& E_start, int& M_stop, double& rate, int adj_variables);
-RcppExport SEXP _SurvBoost_boosting_stratify_core_update(SEXP sampleSEXP, SEXP deltaSEXP, SEXP facilitySEXP, SEXP num_facilitySEXP, SEXP XSEXP, SEXP M_startSEXP, SEXP beta_startSEXP, SEXP L1_startSEXP, SEXP L2_startSEXP, SEXP E_startSEXP, SEXP M_stopSEXP, SEXP rateSEXP, SEXP adj_variablesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type sample(sampleSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type facility(facilitySEXP);
-    Rcpp::traits::input_parameter< int& >::type num_facility(num_facilitySEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int& >::type M_start(M_startSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec& >::type beta_start(beta_startSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type L1_start(L1_startSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type L2_start(L2_startSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type E_start(E_startSEXP);
-    Rcpp::traits::input_parameter< int& >::type M_stop(M_stopSEXP);
-    Rcpp::traits::input_parameter< double& >::type rate(rateSEXP);
-    Rcpp::traits::input_parameter< int >::type adj_variables(adj_variablesSEXP);
-    rcpp_result_gen = Rcpp::wrap(boosting_stratify_core_update(sample, delta, facility, num_facility, X, M_start, beta_start, L1_start, L2_start, E_start, M_stop, rate, adj_variables));
-    return rcpp_result_gen;
-END_RCPP
-}
-// boosting_stratify_core_vec
-double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::vec& X, int& M_stop, double& rate);
-RcppExport SEXP _SurvBoost_boosting_stratify_core_vec(SEXP sampleSEXP, SEXP deltaSEXP, SEXP facilitySEXP, SEXP num_facilitySEXP, SEXP XSEXP, SEXP M_stopSEXP, SEXP rateSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type sample(sampleSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type facility(facilitySEXP);
-    Rcpp::traits::input_parameter< int& >::type num_facility(num_facilitySEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int& >::type M_stop(M_stopSEXP);
-    Rcpp::traits::input_parameter< double& >::type rate(rateSEXP);
-    rcpp_result_gen = Rcpp::wrap(boosting_stratify_core_vec(sample, delta, facility, num_facility, X, M_stop, rate));
-    return rcpp_result_gen;
-END_RCPP
-}
-// boosting_stratify_core_beta
-arma::rowvec boosting_stratify_core_beta(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::mat& X, int& M_stop, double& rate, int adj_variables);
-RcppExport SEXP _SurvBoost_boosting_stratify_core_beta(SEXP sampleSEXP, SEXP deltaSEXP, SEXP facilitySEXP, SEXP num_facilitySEXP, SEXP XSEXP, SEXP M_stopSEXP, SEXP rateSEXP, SEXP adj_variablesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec& >::type sample(sampleSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::vec& >::type facility(facilitySEXP);
-    Rcpp::traits::input_parameter< int& >::type num_facility(num_facilitySEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int& >::type M_stop(M_stopSEXP);
-    Rcpp::traits::input_parameter< double& >::type rate(rateSEXP);
-    Rcpp::traits::input_parameter< int >::type adj_variables(adj_variablesSEXP);
-    rcpp_result_gen = Rcpp::wrap(boosting_stratify_core_beta(sample, delta, facility, num_facility, X, M_stop, rate, adj_variables));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cross_validation_func_update
-Rcpp::List cross_validation_func_update(int K, arma::vec time, arma::vec delta, arma::mat z, arma::vec facility, double rate, int track, int M_stop, int adj_variables);
-RcppExport SEXP _SurvBoost_cross_validation_func_update(SEXP KSEXP, SEXP timeSEXP, SEXP deltaSEXP, SEXP zSEXP, SEXP facilitySEXP, SEXP rateSEXP, SEXP trackSEXP, SEXP M_stopSEXP, SEXP adj_variablesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type K(KSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type time(timeSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type facility(facilitySEXP);
-    Rcpp::traits::input_parameter< double >::type rate(rateSEXP);
-    Rcpp::traits::input_parameter< int >::type track(trackSEXP);
-    Rcpp::traits::input_parameter< int >::type M_stop(M_stopSEXP);
-    Rcpp::traits::input_parameter< int >::type adj_variables(adj_variablesSEXP);
-    rcpp_result_gen = Rcpp::wrap(cross_validation_func_update(K, time, delta, z, facility, rate, track, M_stop, adj_variables));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SurvBoost_boosting_stratify_core", (DL_FUNC) &_SurvBoost_boosting_stratify_core, 8},
-    {"_SurvBoost_reverse_vec", (DL_FUNC) &_SurvBoost_reverse_vec, 1},
     {"_SurvBoost_boosting_stratify_path", (DL_FUNC) &_SurvBoost_boosting_stratify_path, 8},
     {"_SurvBoost_boosting_stratify_numselected1", (DL_FUNC) &_SurvBoost_boosting_stratify_numselected1, 8},
-    {"_SurvBoost_loglik", (DL_FUNC) &_SurvBoost_loglik, 4},
     {"_SurvBoost_boosting_stratify_likelihood1", (DL_FUNC) &_SurvBoost_boosting_stratify_likelihood1, 8},
     {"_SurvBoost_boosting_stratify_BIC1", (DL_FUNC) &_SurvBoost_boosting_stratify_BIC1, 10},
-    {"_SurvBoost_dloglik_stratify2_Cpp", (DL_FUNC) &_SurvBoost_dloglik_stratify2_Cpp, 6},
-    {"_SurvBoost_cvkfold", (DL_FUNC) &_SurvBoost_cvkfold, 2},
-    {"_SurvBoost_normalize", (DL_FUNC) &_SurvBoost_normalize, 1},
-    {"_SurvBoost_boosting_stratify_core_update", (DL_FUNC) &_SurvBoost_boosting_stratify_core_update, 13},
-    {"_SurvBoost_boosting_stratify_core_vec", (DL_FUNC) &_SurvBoost_boosting_stratify_core_vec, 7},
-    {"_SurvBoost_boosting_stratify_core_beta", (DL_FUNC) &_SurvBoost_boosting_stratify_core_beta, 8},
-    {"_SurvBoost_cross_validation_func_update", (DL_FUNC) &_SurvBoost_cross_validation_func_update, 9},
     {NULL, NULL, 0}
 };
 

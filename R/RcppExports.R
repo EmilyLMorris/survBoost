@@ -5,10 +5,6 @@ boosting_stratify_core <- function(sample, delta, facility, num_facility, X, M_s
     .Call('_SurvBoost_boosting_stratify_core', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, M_stop, rate, adj_variables)
 }
 
-reverse_vec <- function(x) {
-    .Call('_SurvBoost_reverse_vec', PACKAGE = 'SurvBoost', x)
-}
-
 boosting_stratify_path <- function(sample, delta, facility, num_facility, X, M_stop, rate, adj_variables) {
     .Call('_SurvBoost_boosting_stratify_path', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, M_stop, rate, adj_variables)
 }
@@ -17,43 +13,11 @@ boosting_stratify_numselected1 <- function(sample, delta, facility, num_facility
     .Call('_SurvBoost_boosting_stratify_numselected1', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, num_selected, rate, adj_variables)
 }
 
-loglik <- function(n, delta, z, beta) {
-    .Call('_SurvBoost_loglik', PACKAGE = 'SurvBoost', n, delta, z, beta)
-}
-
 boosting_stratify_likelihood1 <- function(sample, delta, facility, num_facility, X, rate, delta_likelihood, adj_variables) {
     .Call('_SurvBoost_boosting_stratify_likelihood1', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, rate, delta_likelihood, adj_variables)
 }
 
 boosting_stratify_BIC1 <- function(sample, delta, facility, num_facility, X, rate, early_stop, adj_variables, gamma, aic = FALSE) {
     .Call('_SurvBoost_boosting_stratify_BIC1', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, rate, early_stop, adj_variables, gamma, aic)
-}
-
-dloglik_stratify2_Cpp <- function(n, delta, z, beta, facility, number_facility = 1L) {
-    .Call('_SurvBoost_dloglik_stratify2_Cpp', PACKAGE = 'SurvBoost', n, delta, z, beta, facility, number_facility)
-}
-
-cvkfold <- function(n, k) {
-    .Call('_SurvBoost_cvkfold', PACKAGE = 'SurvBoost', n, k)
-}
-
-normalize <- function(x) {
-    .Call('_SurvBoost_normalize', PACKAGE = 'SurvBoost', x)
-}
-
-boosting_stratify_core_update <- function(sample, delta, facility, num_facility, X, M_start, beta_start, L1_start, L2_start, E_start, M_stop, rate, adj_variables) {
-    .Call('_SurvBoost_boosting_stratify_core_update', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, M_start, beta_start, L1_start, L2_start, E_start, M_stop, rate, adj_variables)
-}
-
-boosting_stratify_core_vec <- function(sample, delta, facility, num_facility, X, M_stop, rate) {
-    .Call('_SurvBoost_boosting_stratify_core_vec', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, M_stop, rate)
-}
-
-boosting_stratify_core_beta <- function(sample, delta, facility, num_facility, X, M_stop, rate, adj_variables) {
-    .Call('_SurvBoost_boosting_stratify_core_beta', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, M_stop, rate, adj_variables)
-}
-
-cross_validation_func_update <- function(K, time, delta, z, facility, rate = 0.01, track = 10L, M_stop = 100L, adj_variables = 0L) {
-    .Call('_SurvBoost_cross_validation_func_update', PACKAGE = 'SurvBoost', K, time, delta, z, facility, rate, track, M_stop, adj_variables)
 }
 

@@ -38,11 +38,14 @@ using namespace Rcpp;
     double L1_max = 0.0;
     for (int j = 0; j < p; j++) {
       if(p_adj!=0){
-        j=p_adj;
+        if(j==0){
+          j = p_adj;
+        }
+        L1.zeros();
         arma::mat S1_temp = arma::zeros(n_sample,p_adj);
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -58,7 +61,7 @@ using namespace Rcpp;
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -77,7 +80,7 @@ using namespace Rcpp;
     arma::vec S2 = arma::zeros(n_sample);
     double L2_star = 0.0;
     for (int g = 0; g < num_facility; g++) {
-      for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+      for (unsigned int i = facility_idx[g].size() - 1; i--;) {
         int index = facility_idx[g][i];
         S2(index) = X(sample(index), j_star) * X(sample(index), j_star) * E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1]));
         if (delta(sample(index)) == 0) continue;
@@ -100,6 +103,7 @@ using namespace Rcpp;
         }
       }
     }
+ 
 
     // Update beta and E
     double temp = rate * L1_max / L2_star;
@@ -117,8 +121,6 @@ using namespace Rcpp;
   return selection_df;
 }
 
-
-// [[Rcpp::export]]
 arma::vec reverse_vec(arma::vec x) {
   std::reverse(x.begin(), x.end());
   return x;
@@ -152,7 +154,7 @@ arma::mat boosting_stratify_path(arma::vec& sample, arma::vec& delta, arma::vec&
         L1.zeros();
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -162,13 +164,11 @@ arma::mat boosting_stratify_path(arma::vec& sample, arma::vec& delta, arma::vec&
             L1 += (trans(X_samp_idx(adj_var_loc)) - S1_temp_adj.row(index) / S0(index));
           }
         }
-
       }
-
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -200,7 +200,7 @@ arma::mat boosting_stratify_path(arma::vec& sample, arma::vec& delta, arma::vec&
       L2.zeros();
       arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           arma::rowvec X_row = X.row(sample(index));
           S2_adj.row(index) = trans(X_row(adj_var_loc)) * E(index) * X_row(adj_var_loc)  + (i == facility_idx[g].size() - 1 ? 0.0 : S2_adj(facility_idx[g][i + 1])) ;
@@ -256,7 +256,7 @@ Rcpp::List boosting_stratify_numselected1(arma::vec& sample, arma::vec& delta, a
         L1.zeros();
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -272,7 +272,7 @@ Rcpp::List boosting_stratify_numselected1(arma::vec& sample, arma::vec& delta, a
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -291,7 +291,7 @@ Rcpp::List boosting_stratify_numselected1(arma::vec& sample, arma::vec& delta, a
     arma::vec S2 = arma::zeros(n_sample);
     double L2_star = 0.0;
     for (int g = 0; g < num_facility; g++) {
-      for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+      for (unsigned int i = facility_idx[g].size() - 1; i--;) {
         int index = facility_idx[g][i];
         S2(index) = X(sample(index), j_star) * X(sample(index), j_star) * E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1]));
         if (delta(sample(index)) == 0) continue;
@@ -304,7 +304,7 @@ Rcpp::List boosting_stratify_numselected1(arma::vec& sample, arma::vec& delta, a
       L2.zeros();
       arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           arma::rowvec X_row = X.row(sample(index));
           S2_adj.row(index) = trans(X_row(adj_var_loc)) * E(index) * X_row(adj_var_loc)  + (i == facility_idx[g].size() - 1 ? 0.0 : S2_adj(facility_idx[g][i + 1])) ;
@@ -332,7 +332,6 @@ Rcpp::List boosting_stratify_numselected1(arma::vec& sample, arma::vec& delta, a
   return List::create(Named("beta")=beta, Named("num_iterations")=num_iterations, Named("selection_df")=selection_df);
 }
 
-//[[Rcpp::export]]
 arma::vec loglik(int n, arma::vec delta, arma::mat z, arma::vec beta){
   arma::vec exp_z_beta = exp(z*beta);
   arma::vec rev1 = reverse_vec(exp_z_beta);
@@ -342,10 +341,8 @@ arma::vec loglik(int n, arma::vec delta, arma::mat z, arma::vec beta){
 
   return(partial_likelihood);
 }
-
 // [[Rcpp::export]]
 Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::mat& X, double& rate, double delta_likelihood, int adj_variables) {
-
   int p = X.n_cols-adj_variables, n_sample = sample.size();
   int p_adj = adj_variables;
   arma::rowvec L2(p_adj);
@@ -382,7 +379,7 @@ Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, ar
         L1.zeros();
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -396,7 +393,7 @@ Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, ar
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -415,7 +412,7 @@ Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, ar
     arma::vec S2 = arma::zeros(n_sample);
     double L2_star = 0.0;
     for (int g = 0; g < num_facility; g++) {
-      for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+      for (unsigned int i = facility_idx[g].size() - 1; i--;) {
         int index = facility_idx[g][i];
         S2(index) = X(sample(index), j_star) * X(sample(index), j_star) * E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1]));
         if (delta(sample(index)) == 0) continue;
@@ -428,7 +425,7 @@ Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, ar
       L2.zeros();
       arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           arma::rowvec X_row = X.row(sample(index));
           S2_adj.row(index) = trans(X_row(adj_var_loc)) * E(index) * X_row(adj_var_loc)  + (i == facility_idx[g].size() - 1 ? 0.0 : S2_adj(facility_idx[g][i + 1])) ;
@@ -467,8 +464,6 @@ Rcpp::List boosting_stratify_likelihood1(arma::vec& sample, arma::vec& delta, ar
 
   return List::create(Named("beta")=beta, Named("num_iterations")=num_iterations, Named("selection_df")=selection_df);
 }
-
-
 // [[Rcpp::export]]
 Rcpp::List boosting_stratify_BIC1(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::mat& X, double& rate, bool& early_stop,  int adj_variables, double gamma, bool aic=false) {
 
@@ -517,7 +512,7 @@ Rcpp::List boosting_stratify_BIC1(arma::vec& sample, arma::vec& delta, arma::vec
         L1.zeros();
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -527,13 +522,11 @@ Rcpp::List boosting_stratify_BIC1(arma::vec& sample, arma::vec& delta, arma::vec
             L1 += (trans(X_samp_idx(adj_var_loc)) - S1_temp_adj.row(index) / S0(index));
           }
         }
-
       }
-
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -565,7 +558,7 @@ Rcpp::List boosting_stratify_BIC1(arma::vec& sample, arma::vec& delta, arma::vec
       L2.zeros();
       arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           arma::rowvec X_row = X.row(sample(index));
           S2_adj.row(index) = trans(X_row(adj_var_loc)) * E(index) * X_row(adj_var_loc)  + (i == facility_idx[g].size() - 1 ? 0.0 : S2_adj(facility_idx[g][i + 1])) ;
@@ -616,7 +609,6 @@ Rcpp::List boosting_stratify_BIC1(arma::vec& sample, arma::vec& delta, arma::vec
   return List::create(Named("beta")=beta, Named("num_iterations")=num_iterations, Named("Information Criteria")=BIC, Named("selection_df")=selection_df);
 }
 
-// [[Rcpp::export]]
 arma::rowvec dloglik_stratify2_Cpp(int n, arma::vec delta, arma::mat z, arma::vec beta, arma::vec facility, int number_facility=1){
   arma::vec S0(delta.size());
   S0.zeros();
@@ -624,7 +616,7 @@ arma::rowvec dloglik_stratify2_Cpp(int n, arma::vec delta, arma::mat z, arma::ve
   S1.zeros();
   arma::vec temp = exp(z*beta);
   arma::mat S1_pre(z.n_rows, z.n_cols);
-  for(int i=0;i<z.n_rows;i++){
+  for(unsigned int i=0;i<z.n_rows;i++){
     S1_pre.row(i) = z.row(i)*temp(i);
   }
   int F_key = 0;
@@ -637,13 +629,13 @@ arma::rowvec dloglik_stratify2_Cpp(int n, arma::vec delta, arma::mat z, arma::ve
     arma::mat S1_row_loc = S1_pre.rows(loc);
     arma::mat S1_loc(loc.size(), beta.size());
 
-    for(int i=0;i<S1_row_loc.n_cols;i++){
+    for(unsigned int i=0;i<S1_row_loc.n_cols;i++){
       arma::vec S1_col = reverse_vec(cumsum(reverse_vec(S1_row_loc.col(i))));
       S1_loc.col(i) = S1_col;
     }
     S1.rows(loc) = S1_loc;
   }
-
+  
   arma::mat S1_S0(n,beta.size());
   for(int i=0; i< S1.n_cols;i++){
     S1_S0.col(i) = (S1.col(i))/S0;
@@ -655,7 +647,6 @@ arma::rowvec dloglik_stratify2_Cpp(int n, arma::vec delta, arma::mat z, arma::ve
   return(L1);
 }
 
-//[[Rcpp::export]]
 arma::mat cvkfold(int n, int k){
   int fl = floor(n/k);
   arma::mat folds(0,k);
@@ -673,13 +664,11 @@ arma::mat cvkfold(int n, int k){
   return(folds_shuffle);
 }
 
-//[[Rcpp::export]]
 arma::vec normalize(arma::vec x){
   arma::vec y = sqrt(x.size())*(x-mean(x))/sqrt(sum(square(x-mean(x))));
   return(y);
 }
 
-// [[Rcpp::export]]
 List boosting_stratify_core_update(arma::vec& sample,
                                    arma::vec& delta,
                                    arma::vec& facility,
@@ -710,7 +699,7 @@ List boosting_stratify_core_update(arma::vec& sample,
         arma::mat S1_temp = arma::zeros(n_sample,p_adj);
         arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
         for (int g = 0; g < num_facility; g++) {
-          for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+          for (unsigned int i = facility_idx[g].size() - 1; i--;) {
             int index = facility_idx[g][i];
             if (S0(index) == 0)
               S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -724,7 +713,7 @@ List boosting_stratify_core_update(arma::vec& sample,
       double L1_cur = 0.0;
       arma::vec S1_temp = arma::zeros(n_sample);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           if (S0(index) == 0)
             S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -756,7 +745,7 @@ List boosting_stratify_core_update(arma::vec& sample,
       L2.zeros();
       arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
       for (int g = 0; g < num_facility; g++) {
-        for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+        for (unsigned int i = facility_idx[g].size() - 1; i--;) {
           int index = facility_idx[g][i];
           arma::rowvec X_row = X.row(sample(index));
           S2.row(index) = trans(X_row(adj_var_loc)) * E(index) * X_row(adj_var_loc)  + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1])) ;
@@ -779,7 +768,6 @@ List boosting_stratify_core_update(arma::vec& sample,
   return List::create(Named("beta") = beta, Named("L1") = L1, Named("L2") = L2, Named("E") = E);
 }
 
-// [[Rcpp::export]]
 double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility, arma::vec& X, int& M_stop, double& rate) {
   int n_sample = sample.size();
   double beta = 0;
@@ -797,7 +785,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
     double L1_cur = 0.0;
     arma::vec S1_temp = arma::zeros(n_sample);
     for (int g = 0; g < num_facility; g++) {
-      for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+      for (unsigned int i = facility_idx[g].size() - 1; i--;) {
         int index = facility_idx[g][i];
         if (S0(index) == 0)
           S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -814,7 +802,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
     arma::vec S2 = arma::zeros(n_sample);
     double L2_star = 0.0;
     for (int g = 0; g < num_facility; g++) {
-      for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+      for (unsigned int i = facility_idx[g].size() - 1; i--;) {
         int index = facility_idx[g][i];
         S2(index) = X(sample(index)) * X(sample(index)) * E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1]));
         if (delta(sample(index)) == 0) continue;
@@ -830,7 +818,6 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
   return beta;
 }
 
- // [[Rcpp::export]]
  arma::rowvec boosting_stratify_core_beta(arma::vec& sample, arma::vec& delta, arma::vec& facility, int& num_facility,
                                           arma::mat& X , int& M_stop, double& rate, int adj_variables) {
    int p = X.n_cols, n_sample = sample.size();
@@ -854,7 +841,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
          arma::mat S1_temp = arma::zeros(n_sample,p_adj);
          arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
          for (int g = 0; g < num_facility; g++) {
-           for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+           for (unsigned int i = facility_idx[g].size() - 1; i--;) {
              int index = facility_idx[g][i];
              if (S0(index) == 0)
                S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -870,7 +857,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
        double L1_cur = 0.0;
        arma::vec S1_temp = arma::zeros(n_sample);
        for (int g = 0; g < num_facility; g++) {
-         for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+         for (unsigned int i = facility_idx[g].size() - 1;  i--;) {
            int index = facility_idx[g][i];
            if (S0(index) == 0)
              S0(index) = E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S0(facility_idx[g][i + 1]));
@@ -889,7 +876,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
      arma::vec S2 = arma::zeros(n_sample);
      double L2_star = 0.0;
      for (int g = 0; g < num_facility; g++) {
-       for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+       for (unsigned int i = facility_idx[g].size() - 1;  i--;) {
          int index = facility_idx[g][i];
          S2(index) = X(sample(index), j_star) * X(sample(index), j_star) * E(index) + (i == facility_idx[g].size() - 1 ? 0.0 : S2(facility_idx[g][i + 1]));
          if (delta(sample(index)) == 0) continue;
@@ -902,7 +889,7 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
        L2.zeros();
        arma::uvec adj_var_loc = arma::linspace<arma::uvec>(0,p_adj-1,p_adj);
        for (int g = 0; g < num_facility; g++) {
-         for (int i = facility_idx[g].size() - 1; i >= 0; i--) {
+         for (unsigned int i = facility_idx[g].size() - 1; i--;) {
            int index = facility_idx[g][i];
            arma::rowvec X_row = X.row(sample(index));
 
@@ -928,14 +915,13 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
    return beta;
  }
 
- // [[Rcpp::export]]
  Rcpp::List cross_validation_func_update(int K, arma::vec time, arma::vec delta, arma::mat z, arma::vec facility,
                                          double rate=0.01, int track=10,int M_stop=100, int adj_variables=0){
    arma::mat selection_df;
    arma::vec fac_unique = arma::unique(facility);
    int num_facility = fac_unique.size();
    arma::vec IDvector(z.n_rows);
-   for(int i=0; i< z.n_rows; i++) IDvector(i) = i;
+   for(unsigned int i=0; i< z.n_rows; i++) IDvector(i) = i;
    arma::rowvec boosting_coef = boosting_stratify_core_beta(IDvector, delta, facility, num_facility, z, M_stop, rate, adj_variables);
    arma::vec coef_nonzero = boosting_coef(find(abs(boosting_coef)>(rate/2)));
 
@@ -989,9 +975,9 @@ double boosting_stratify_core_vec(arma::vec& sample, arma::vec& delta, arma::vec
      F_k.push_back(unique_provfs.size());
 
      j=0;
-     while (j<unique_provfs.size()){
+     while (j<(int)unique_provfs.size()){
        arma::uvec location = find(facility_k_temp==unique_provfs(j));
-       for(int i=0;i<location.size();i++){
+       for(unsigned int i=0;i<location.size();i++){
          facility_k_temp(location(i))=j+1;
        }
        j++;

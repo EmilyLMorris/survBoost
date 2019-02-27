@@ -98,6 +98,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cross_validation_func_update
+Rcpp::List cross_validation_func_update(int K, arma::vec time, arma::vec delta, arma::mat z, arma::vec facility, double rate, int track, int M_stop, int adj_variables);
+RcppExport SEXP _SurvBoost_cross_validation_func_update(SEXP KSEXP, SEXP timeSEXP, SEXP deltaSEXP, SEXP zSEXP, SEXP facilitySEXP, SEXP rateSEXP, SEXP trackSEXP, SEXP M_stopSEXP, SEXP adj_variablesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type time(timeSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type facility(facilitySEXP);
+    Rcpp::traits::input_parameter< double >::type rate(rateSEXP);
+    Rcpp::traits::input_parameter< int >::type track(trackSEXP);
+    Rcpp::traits::input_parameter< int >::type M_stop(M_stopSEXP);
+    Rcpp::traits::input_parameter< int >::type adj_variables(adj_variablesSEXP);
+    rcpp_result_gen = Rcpp::wrap(cross_validation_func_update(K, time, delta, z, facility, rate, track, M_stop, adj_variables));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SurvBoost_boosting_stratify_core", (DL_FUNC) &_SurvBoost_boosting_stratify_core, 8},
@@ -105,6 +124,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SurvBoost_boosting_stratify_numselected1", (DL_FUNC) &_SurvBoost_boosting_stratify_numselected1, 8},
     {"_SurvBoost_boosting_stratify_likelihood1", (DL_FUNC) &_SurvBoost_boosting_stratify_likelihood1, 8},
     {"_SurvBoost_boosting_stratify_BIC1", (DL_FUNC) &_SurvBoost_boosting_stratify_BIC1, 10},
+    {"_SurvBoost_cross_validation_func_update", (DL_FUNC) &_SurvBoost_cross_validation_func_update, 9},
     {NULL, NULL, 0}
 };
 

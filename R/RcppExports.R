@@ -21,3 +21,7 @@ boosting_stratify_BIC1 <- function(sample, delta, facility, num_facility, X, rat
     .Call('_SurvBoost_boosting_stratify_BIC1', PACKAGE = 'SurvBoost', sample, delta, facility, num_facility, X, rate, early_stop, adj_variables, gamma, aic)
 }
 
+cross_validation_func_update <- function(K, time, delta, z, facility, rate = 0.01, track = 10L, M_stop = 100L, adj_variables = 0L) {
+    .Call('_SurvBoost_cross_validation_func_update', PACKAGE = 'SurvBoost', K, time, delta, z, facility, rate, track, M_stop, adj_variables)
+}
+

@@ -2,20 +2,23 @@
 
 #' Stratification function
 #'
-#' This function assists in evaluating whether the supplied variable is useful for stratification when fitting a cox proportional hazards model.
-#' @param x variable that may be used for stratification, can be categorical or continuous.
+#' This function assists in evaluating whether the supplied variable is useful
+#' for stratification when fitting a cox proportional hazards model.
+#' @param x variable that may be used for stratification, can be categorical or
+#'   continuous.
 #' @param survival.time vector of survival time corresponding to input vector x.
-#' @param split specifies how to split a continuous variable. Default is median value.
-#' @return Generates a plot and table. Table displays the quartiles of the groups of x. A boxplot is also generated to display the distributions of the groups in x visually.
+#' @param split specifies how to split a continuous variable. Default is median
+#'   value.
+#' @return Generates a plot and table. Table displays the quartiles of the
+#'   groups of x. A boxplot is also generated to display the distributions of
+#'   the groups in x visually.
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
 #' strata.boosting(data$strata_idx, data$time)
-#'
+#' 
 strata.boosting <- function(x, survival.time, split="median"){
-  library(ggplot2)
-  library(plyr)
   data <- data.frame(x, survival.time)
   
   give.n <- function(x){
@@ -29,7 +32,7 @@ strata.boosting <- function(x, survival.time, split="median"){
       print(p)
       
       # print summary table
-      plyr::ddply(data, .(x), plyr::summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
+      plyr::ddply(data, plyr::.(as.factor(x)), plyr::summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
                   Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
     }
     else if(length(unique(x))<10){ # limit is 10 strata
@@ -38,7 +41,7 @@ strata.boosting <- function(x, survival.time, split="median"){
       print(p)
       
       # print summary table of quartiles
-      plyr::ddply(data, .(as.factor(x)), summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
+      plyr::ddply(data, plyr::.(as.factor(x)), plyr::summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
                   Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
       
     }
@@ -51,8 +54,7 @@ strata.boosting <- function(x, survival.time, split="median"){
           ggplot2::stat_summary(fun.data = give.n, geom = "text") + ggplot2::ylab("Survival Time") + ggplot2::xlab(NULL) +
           ggplot2::scale_x_discrete(labels=c("0" = "< Median", "1" = "> Median"))
         print(p)
-        
-        plyr::ddply(data, .(as.factor(x.split)), summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
+        plyr::ddply(data, plyr::.(as.factor(x.split)), plyr::summarise,  Min=stats::quantile(survival.time, 0), Q1=stats::quantile(survival.time, 0.25),
                     Median=stats::quantile(survival.time, 0.5), Q3=stats::quantile(survival.time, 0.75), Max=stats::quantile(survival.time, 1))
       }
     }

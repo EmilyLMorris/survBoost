@@ -1,23 +1,34 @@
+globalVariables(c("value", "variable", "terms", "strata"))
 #' Boosting core function
 #'
 #' This function allows you to use gradient boosting for variable selection.
-#' @param formula a formula object with a response value using the Surv function.
+#' @param formula a formula object with a response value using the Surv
+#'   function.
 #' @param data a data.frame containing all variables specified in the formula.
 #' @param rate the desired update rate used in the boosting algorithm.
-#' @param control an integer used as the number of iterations of the boosting algorithm. Default value is 500.
-#' @param control_method specifies stopping method, options include: cv, num_selected, likelihood, BIC, AIC. Default is NULL, which will use a fixed number of iterations as specified by control.
-#' @param control_parameter provides the parameter needed for each corresponding control_method option.
-#' @return a list containing the vector of coefficients (beta), variable selection matrix that contains the coefficients at each iteration (selection_df), the number of boosting iterations (mstop), and other stopping criteria if applicable to selected method.
+#' @param control an integer used as the number of iterations of the boosting
+#'   algorithm. Default value is 500.
+#' @param control_method specifies stopping method, options include: cv,
+#'   num_selected, likelihood, BIC, AIC. Default is NULL, which will use a fixed
+#'   number of iterations as specified by control.
+#' @param control_parameter provides the parameter needed for each corresponding
+#'   control_method option.
+#' @param censoring_type currently only right censoring is implemented. 
+#' @return a list containing the vector of coefficients (beta), variable
+#'   selection matrix that contains the coefficients at each iteration
+#'   (selection_df), the number of boosting iterations (mstop), and other
+#'   stopping criteria if applicable to selected method.
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting_core(formula, data, rate=0.1, control=500)
 #' boosting_core(formula, data, rate=0.1, control_method="num_selected", control_parameter=5)
-#'
+#' 
 boosting_core <- function(formula, data, rate, control=500, control_method=NULL, control_parameter=NULL, censoring_type = "right" ){
-  require(survival)
+  # require(survival)  
   df <- stats::get_all_vars(formula, data=data) # takes a few seconds
   output <- list(formula=formula, data=data, rate=rate, censoring_type = censoring_type)
   data_name <- deparse(substitute(data))
@@ -62,7 +73,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   
   strats <- attr(Terms, "specials")$strata
   if (length(strats)) {
-    stemp <- untangle.specials(Terms, "strata", 1)
+    stemp <- survival::untangle.specials(Terms, "strata", 1)
     if (length(stemp$vars) == 1)
       strata.keep <- mf[[stemp$vars]]
     else strata.keep <- survival::strata(mf[, stemp$vars], shortlabel = TRUE)
@@ -151,7 +162,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   }
   else{
     cat("Incorrect option for mstop_method. Options are: 'cv', 'num_selected', 'likelihood', 'AIC', 'BIC', or provide a number for control." )
-    break
+    # break
   }
   output$control_method = control_method
   output$coefficients <- as.vector(output$beta)
@@ -171,41 +182,60 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   output
 }
 
-
-print.boosting = function(x){
+#' Prints the call and coefficients from boosting model selection
+#'
+#' This function displays the coefficient estimates of all variables from a
+#' model generated with the boosting_core function.
+#' @param x output from boosting_core function.
+#' @param ... ignored
+#' @return list containing the coefficient vector and function call.
+#' @keywords gradient boosting
+#' @export
+#' @examples
+#' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
+#' print(boosting.output)
+#' 
+print.boosting = function(x, ...){
   x = x[c("call", "coefficients")]
   NextMethod()
 }
 
 #' Summary of boosting model selection
 #'
-#' This function displays the variables selected from a model generated with the boosting_core function.
-#' @param output output from boosting_core function.
-#' @return list containing the coefficient vector, number of boosting iterations, and resulting formula from the variable selection.
+#' This function displays the variables selected from a model generated with the
+#' boosting_core function.
+#' @param object output from boosting_core function.
+#' @param ... ignored
+#' @return list containing the coefficient vector, number of boosting
+#'   iterations, and resulting formula from the variable selection.
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' summary.boosting(boosting.output)
-#'
-summary.boosting <- function(x)
+#' 
+summary.boosting <- function(object, ...)
 {
-  cat("Call:\n", deparse(x$call), "\n")
+  cat("Call:\n", deparse(object$call), "\n")
   
-  reduced_beta <- x$coefficients[which(x$coefficients!=0)]
+  reduced_beta <- object$coefficients[which(object$coefficients!=0)]
   cat("\n", "Coefficients:", "\n")
   print(reduced_beta)
   
-  cat("\n", "Number of iterations: ", x$mstop, "\n")
-  output <- list(reduced_beta, x$mstop)
+  cat("\n", "Number of iterations: ", object$mstop, "\n")
+  output <- list(reduced_beta, object$mstop)
   
-  df_coxph <- x[[1]]
-  df_coxph$strata <- x$strata
+  df_coxph <- object[[1]]
+  df_coxph$strata <- object$strata
   
-  strata.col <- which(sapply(x[[1]], identical, x$strata)==TRUE)
-  strata.name <- names(x[[1]])[strata.col]
+  strata.col <- which(sapply(object[[1]], identical, object$strata)==TRUE)
+  strata.name <- names(object[[1]])[strata.col]
   strata.fmla <- paste("strata(",strata.name ,")")
   fmla_reduced <- stats::as.formula(paste("Surv(time,delta) ~ ", paste(c(names(reduced_beta), strata.fmla), collapse= "+")))
   cat("\n", "Formula: ", deparse(fmla_reduced), "\n")
@@ -217,20 +247,26 @@ summary.boosting <- function(x)
 
 #' Boosting plot function
 #'
-#' This function allows you to visualize the coefficient paths of the boosting algorithm.
-#' @param output output from the boosting_core function.
+#' This function allows you to visualize the coefficient paths of the boosting
+#' algorithm.
+#' @param x output from the boosting_core function.
+#' @param y y coordinates of plot, default is NULL. 
+#' @param type specifies type of coefficient plot. Default value is frequency
+#' which plots the proportion of variables selected. Alternatively type set to 
+#' "coefficients" plots the coefficient path for each variable.
+#' @param ... ignored 
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' plot.boosting(boosting.output)
 #' plot.boosting(boosting.output, type="coefficients")
-#'
-plot.boosting <- function(x, type="frequency")
+#' 
+plot.boosting <- function(x, y=NULL, type="frequency", ...)
 {
-  require(ggplot2)
   selection_df <- x$selection_df
   
   if(type == "frequency"){
@@ -243,8 +279,6 @@ plot.boosting <- function(x, type="frequency")
       ggplot2::geom_line(ggplot2::aes(y = y, colour = "y"))  + ggplot2::theme_bw() + ggplot2::theme(legend.position="none", text=ggplot2::element_text(family="Times", size=16)) +
       ggplot2::xlab("Number of boosting iterations") + ggplot2::ylab("Proportion of variables selected")  
   } else if(type == "coefficients"){
-    require(reshape2)
-    require(directlabels)
     selection_df <- rbind(rep(0,ncol(selection_df)), selection_df)
     x_axis <- c(0:x$mstop)
     plot_data <- data.frame(x_axis, selection_df)
@@ -258,16 +292,20 @@ plot.boosting <- function(x, type="frequency")
 
 #' Boosting model fit function
 #'
-#' This function provides details of the model fit from the boosting_core function.
-#' @param output output from boosting_core function.
+#' This function provides details of the model fit from the boosting_core
+#' function.
+#' @param x output from boosting_core function.
+#' @param all_beta default value is FALSE. If this is set to TRUE the 
+#' coefficient estimates for all the parameters will be printed. 
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' modelfit.boosting(boosting.output)
-#'
+#' 
 modelfit.boosting <- function(x, all_beta=NULL){
   cat("Call:\n", deparse(x$call), "\n")
   cat("\n", "data: ", names(x)[1], "\n") # data name should be first in the list of boosting output
@@ -289,26 +327,25 @@ modelfit.boosting <- function(x, all_beta=NULL){
 #' Boosting inference function
 #'
 #' This function provides post selection inference.
-#' @param formula a formula object obtained from the summary of the boosting_core function.
-#' @param data data.frame containing variables included in the formula.
+#' @param x output from boosting_core function. 
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' inference.boosting(boosting.output)
 #'
 # POST SELECTION INFERENCE
-inference.boosting <- function(x){ # (fmla, data)
-  # x is a boosting object
+inference.boosting <- function(x){ 
   data = data.frame(x$data) 
   data$strata = x$strata
   variables.selected <- names(x$coefficients)[which(abs(x$coefficients) > x$rate)]
-  if(!is.null(boosting.output$strata)){
-    fmla = formula(paste(x$formula[2] , "~ ",   paste(c(variables.selected, "strata(strata)"), collapse = "+")))
+  if(!is.null(x$strata)){
+    fmla = stats::formula(paste(x$formula[2] , "~ ",   paste(c(variables.selected, "strata(strata)"), collapse = "+")))
   }else{
-    fmla = formula(paste(x$formula[2] , "~ ", paste(variables.selected, collapse = " + ")))
+    fmla = stats::formula(paste(x$formula[2] , "~ ", paste(variables.selected, collapse = " + ")))
   }
   fit <- survival::coxph(fmla, data=data)
   print(summary(fit))
@@ -316,36 +353,38 @@ inference.boosting <- function(x){ # (fmla, data)
 
 #' Boosting predict function
 #'
-#' This function predicts
-#' @param output output from boosting_core function.
-#' @param new_data data.frame used for prediction. Default is NULL and will use data specified for boosting algorithm.
-#' @return vector of the hazard ratio for each observation relative to the sample average.
+#' This function predicts the hazard ratio for each subject in the input dataset. 
+#' @param object output from boosting_core function.
+#' @param new_data data.frame used for prediction. Default is NULL and will 
+#' use data specified for boosting algorithm.
+#' @param ... ignored
+#' @return vector of the hazard ratio for each observation relative to the 
+#' sample average.
 #' @keywords gradient boosting
 #' @export
 #' @examples
 #' data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+#' formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+#' V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 #' boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 #' predict.boosting(boosting.output)
 #'
 # PREDICT BOOSTING
-predict.boosting <- function(x, new_data=NULL){
-  # x is a boosting_core object
-  if(is.null(new_data)) new_data <- x$data
+predict.boosting <- function(object, new_data=NULL, ...){
+  if(is.null(new_data)) new_data <- object$data
   
-  var_selected <- names(which(x$coefficients!=0))
+  var_selected <- names(which(object$coefficients!=0))
   sample_avg <- colMeans(new_data[var_selected])
   
   #calculate exp(Xb) for sample average
-  hazard_avg <- exp(sample_avg %*% x$coefficients[which(x$coefficients!=0)])
+  hazard_avg <- exp(sample_avg %*% object$coefficients[which(object$coefficients!=0)])
   
   predict <- NULL
   for(i in 1:nrow(new_data)){
     #calculate exp(X'b) for individual
     current_values <- unlist(new_data[i,var_selected], use.names = FALSE)
-    hazard_ind <- exp(current_values %*% x$coefficients[which(x$coefficients!=0)])
+    hazard_ind <- exp(current_values %*% object$coefficients[which(object$coefficients!=0)])
     predict[i] <- hazard_ind/hazard_avg
   }
   return(predict)
-  
 }

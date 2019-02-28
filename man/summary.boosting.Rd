@@ -4,20 +4,25 @@
 \alias{summary.boosting}
 \title{Summary of boosting model selection}
 \usage{
-\method{summary}{boosting}(x)
+\method{summary}{boosting}(object, ...)
 }
 \arguments{
-\item{output}{output from boosting_core function.}
+\item{object}{output from boosting_core function.}
+
+\item{...}{ignored}
 }
 \value{
-list containing the coefficient vector, number of boosting iterations, and resulting formula from the variable selection.
+list containing the coefficient vector, number of boosting
+  iterations, and resulting formula from the variable selection.
 }
 \description{
-This function displays the variables selected from a model generated with the boosting_core function.
+This function displays the variables selected from a model generated with the
+boosting_core function.
 }
 \examples{
 data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 summary.boosting(boosting.output)
 

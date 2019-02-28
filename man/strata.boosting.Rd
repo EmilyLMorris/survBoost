@@ -7,17 +7,22 @@
 strata.boosting(x, survival.time, split = "median")
 }
 \arguments{
-\item{x}{variable that may be used for stratification, can be categorical or continuous.}
+\item{x}{variable that may be used for stratification, can be categorical or
+continuous.}
 
 \item{survival.time}{vector of survival time corresponding to input vector x.}
 
-\item{split}{specifies how to split a continuous variable. Default is median value.}
+\item{split}{specifies how to split a continuous variable. Default is median
+value.}
 }
 \value{
-Generates a plot and table. Table displays the quartiles of the groups of x. A boxplot is also generated to display the distributions of the groups in x visually.
+Generates a plot and table. Table displays the quartiles of the
+  groups of x. A boxplot is also generated to display the distributions of
+  the groups in x visually.
 }
 \description{
-This function assists in evaluating whether the supplied variable is useful for stratification when fitting a cox proportional hazards model.
+This function assists in evaluating whether the supplied variable is useful
+for stratification when fitting a cox proportional hazards model.
 }
 \examples{
 data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))

@@ -4,22 +4,27 @@
 \alias{predict.boosting}
 \title{Boosting predict function}
 \usage{
-\method{predict}{boosting}(x, new_data = NULL)
+\method{predict}{boosting}(object, new_data = NULL, ...)
 }
 \arguments{
-\item{new_data}{data.frame used for prediction. Default is NULL and will use data specified for boosting algorithm.}
+\item{object}{output from boosting_core function.}
 
-\item{output}{output from boosting_core function.}
+\item{new_data}{data.frame used for prediction. Default is NULL and will 
+use data specified for boosting algorithm.}
+
+\item{...}{ignored}
 }
 \value{
-vector of the hazard ratio for each observation relative to the sample average.
+vector of the hazard ratio for each observation relative to the 
+sample average.
 }
 \description{
-This function predicts
+This function predicts the hazard ratio for each subject in the input dataset.
 }
 \examples{
 data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 predict.boosting(boosting.output)
 

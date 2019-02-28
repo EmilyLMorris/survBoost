@@ -4,17 +4,27 @@
 \alias{plot.boosting}
 \title{Boosting plot function}
 \usage{
-\method{plot}{boosting}(x, type = "frequency")
+\method{plot}{boosting}(x, y = NULL, type = "frequency", ...)
 }
 \arguments{
-\item{output}{output from the boosting_core function.}
+\item{x}{output from the boosting_core function.}
+
+\item{y}{y coordinates of plot, default is NULL.}
+
+\item{type}{specifies type of coefficient plot. Default value is frequency
+which plots the proportion of variables selected. Alternatively type set to 
+"coefficients" plots the coefficient path for each variable.}
+
+\item{...}{ignored}
 }
 \description{
-This function allows you to visualize the coefficient paths of the boosting algorithm.
+This function allows you to visualize the coefficient paths of the boosting
+algorithm.
 }
 \examples{
 data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
-formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
+formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
+V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
 boosting.output <- boosting_core(formula, data, rate=0.1, control=500)
 plot.boosting(boosting.output)
 plot.boosting(boosting.output, type="coefficients")

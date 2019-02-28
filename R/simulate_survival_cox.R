@@ -8,31 +8,49 @@ require(mvtnorm)
 #'
 #' This function allows you to simulate stratified survival data.
 #' @param true_beta Contains true parameter values to simulate from.
-#' @param base_hazard
-#' @param base_hazard_scale
-#' @param base_hazard_shape
-#' @param num_strata
-#' @param input_strata_size
-#' @param z_matrix
-#' @param cov_structure
-#' @param block_size
-#' @param rho
-#' @param censor_dist
-#' @param censor_const
-#' @param tau
-#' @param normalized
-#' @return a matrix with survival time (time), event indicator (delta), stratification variable (strata_idx), a vector for each variable specified by the true_beta.
+#' @param base_hazard Baseline hazard distribution. Default is set to 
+#' exponential, "weibull" is also available. 
+#' @param base_hazard_scale Scale parameter used if baseline hazard
+#' distribution is weibull. 
+#' @param base_hazard_shape Shape parameter used if baseline hazard
+#' distribution is weibull. 
+#' @param num_strata Number of strata to simulate, default is 10. 
+#' @param input_strata_size Average sample size of each stratum, 
+#' default is 50. 
+#' @param z_matrix Covariate matrix. Default is NULL, will be simulated
+#' as multivariate normal if not provided.  
+#' @param cov_structure Covariance structure. Default is "diag"
+#' could also be "ar" for AR1 or "cs" for compound symmetry. 
+#' @param block_size Block size used for covariance structure.
+#' Default value is 1.  
+#' @param rho Correlation parameter used for "ar" or "cs" covariance 
+#' structure. 
+#' @param censor_dist Censoring distribution, default is "unif" for 
+#' uniform distribution. Exponential distribution is used if set to "exp"
+#' @param censor_const Parameter used to specify the censoring distribution. 
+#' Default value is 5. 
+#' @param tau Positive scalar used to represent possible follow up time. 
+#' Default is Inf. 
+#' @param normalized Logical parameter representing whether or not the covariate
+#' matrix should be normalized. Default is FALSE. 
+#' @return a matrix with survival time (time), event indicator (delta), 
+#' stratification variable (strata_idx), a vector for each variable 
+#' specified by the true_beta.
 #' @keywords gradient boosting
 #' @export
 #' @examples
-#' toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=FALSE)
+#' toyData <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0), 
+#' base_hazard="weibull", base_hazard_scale=rep(1,5), base_hazard_shape=rep(2,5), 
+#' num_strata=5, input_strata_size=100, cov_structure="diag", block_size=2, 
+#' rho=0.3, censor_dist="unif", censor_const=5, tau=Inf, normalized=FALSE)
 #' any(duplicated(toyData$time))
 #' z <- as.matrix(toyData[,-c(1,2,3)])
 #'
 #'
-simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_scale=NULL, base_hazard_shape=NULL,
-                                  num_strata=10, input_strata_size=50, z_matrix=NULL, cov_structure="diag",
-                                  block_size=1, rho=NULL, censor_dist="unif", censor_const=5, tau=Inf, normalized=F)
+simulate_survival_cox <- function(true_beta, base_hazard="auto", base_hazard_scale=NULL, base_hazard_shape=NULL, num_strata=10, input_strata_size=50, 
+                                  z_matrix=NULL, cov_structure="diag",
+                                  block_size=1, rho=NULL, censor_dist="unif", 
+                                  censor_const=5, tau=Inf, normalized=F)
 {
 	p <- length(true_beta)
 	if(length(input_strata_size) == 1)

@@ -12,3 +12,4 @@ The following line of R code installs the package.
 # install.packages("devtools")
 install_github("EmilyLMorris/survBoost")
 ```
+[![Travis build status](https://travis-ci.org/EmilyLMorris/survBoost.svg?branch=master)](https://travis-ci.org/EmilyLMorris/survBoost)

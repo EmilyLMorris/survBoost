@@ -4,7 +4,8 @@ Title: Gradient Boosting for Survival Data
 Version: 0.1.0
 Author: Emily Morris
 Maintainer: Emily Morris <emorrisl@umich.edu>
-Description: Gradient boosting for optimizing loss functions of different types of survival data.
+Description: Gradient boosting for optimizing loss functions of different types of survival data, 
+  including stratified data.
 License: GPL-3
 LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel

@@ -5,7 +5,8 @@ Version: 0.1.0
 Author: Emily Morris
 Maintainer: Emily Morris <emorrisl@umich.edu>
 Description: Gradient boosting for optimizing loss functions of different types of survival data, 
-  including stratified data.
+  including stratified data. 
+  Emily Morris, Kevin He, Yanming Li, Yi Li, Jian Kang (2018) <arXiv:1803.07715>
 License: GPL-3
 LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel

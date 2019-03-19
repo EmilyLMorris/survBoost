@@ -105,6 +105,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
     if(is.null(control_parameter)){
       control_parameter=10
     }
+    X_cov <- as.matrix(X_cov)
     cv_result <- cross_validation_func_update(K=control_parameter, time, delta, X_cov, strata, rate, M_stop=control)
     mstop_cv <- cv_result$mstop
     result <- boosting_stratify_core(sample, delta, strats, num_strata, X_cov, mstop_cv, rate, adj_variables)

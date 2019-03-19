@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Added link to methods description in the DESCRIPTION file. 
+* Added link to arXiv paper with methods description in the DESCRIPTION file. 
 
 ## Release Summary
 This is the first attempted release of SurvBoost. 

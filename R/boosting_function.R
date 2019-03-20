@@ -34,8 +34,6 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   data_name <- deparse(substitute(data))
   
   Call <- match.call()
-  time <- df[,1]
-  delta <- df[,2]
   
   special <- c("strata")
   indx <- match(c("formula", "data", "na.action"), names(Call), nomatch = 0)
@@ -47,6 +45,11 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   environment(temp$formula) <- coxenv
   mf <- eval(temp, parent.frame())
   Terms <- stats::terms(mf)
+  
+  # edits for Y
+  Y <- model.extract(mf, "response")
+  time <- Y[,1]
+  delta <- Y[,2]
   
   if (length(attr(Terms, "variables")) > 2) {
     ytemp <- formula[1:2]
@@ -105,8 +108,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
     if(is.null(control_parameter)){
       control_parameter=10
     }
-    X_cov <- as.matrix(X_cov)
-    cv_result <- cross_validation_func_update(K=control_parameter, time, delta, X_cov, strata, rate, M_stop=control)
+    cv_result <- cross_validation_func_update(control_parameter, time, delta, X_cov, strats, rate, control)
     mstop_cv <- cv_result$mstop
     result <- boosting_stratify_core(sample, delta, strats, num_strata, X_cov, mstop_cv, rate, adj_variables)
     output$selection_df <- result

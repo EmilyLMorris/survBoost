@@ -916,7 +916,7 @@ arma::rowvec boosting_stratify_core_beta(arma::vec& sample, arma::vec& delta, ar
 }
 // [[Rcpp::export]]
 Rcpp::List cross_validation_func_update(int K, arma::vec time, arma::vec delta, arma::mat z, arma::vec facility,
-                                        double rate=0.01, int track=10,int M_stop=100, int adj_variables=0){
+                                        double rate=0.01, int track=10, int M_stop=100, int adj_variables=0){
   arma::mat selection_df;
   arma::vec fac_unique = arma::unique(facility);
   int num_facility = fac_unique.size();

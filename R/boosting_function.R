@@ -47,7 +47,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
   Terms <- stats::terms(mf)
   
   # edits for Y
-  Y <- model.extract(mf, "response")
+  Y <- stats::model.extract(mf, "response")
   time <- Y[,1]
   delta <- Y[,2]
   
@@ -108,7 +108,7 @@ boosting_core <- function(formula, data, rate, control=500, control_method=NULL,
     if(is.null(control_parameter)){
       control_parameter=10
     }
-    cv_result <- cross_validation_func_update(control_parameter, time, delta, X_cov, strats, rate, control)
+    cv_result <- cross_validation_func_update(control_parameter, time, delta, X_cov, strats, rate, M_stop=control)
     mstop_cv <- cv_result$mstop
     result <- boosting_stratify_core(sample, delta, strats, num_strata, X_cov, mstop_cv, rate, adj_variables)
     output$selection_df <- result

@@ -1,10 +1,8 @@
-## Resubmission
-This is a resubmission. In this version I have:
+## Resubmission  
+In this version I have:
 
-* Added link to arXiv paper with methods description in the DESCRIPTION file. 
-
-## Release Summary
-This is the first attempted release of SurvBoost. 
+* Fixed a bug found in the cross validation code. 
+* Updated README to include a clearer description and example. 
 
 ## Test environments
 * local OS X install, R 3.5.1

@@ -24,8 +24,8 @@ devtools::install_github("EmilyLMorris/survBoost")
 Simple example of variable selection:
 ```{r, eval = FALSE}
 # Using fixed number of iterations: 
-boosting_core(Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
-V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10, data, rate=0.1, control=500) # using fixed number of iterations
+boosting_core(Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + V3 + V4 + V5, 
+              data, rate=0.1, control=500) 
 
 # Specifying the number of variables to select: 
 boosting_core(formula, data, rate=0.1, control_method="num_selected", control_parameter=5)
@@ -33,7 +33,7 @@ boosting_core(formula, data, rate=0.1, control_method="num_selected", control_pa
 
 Check whether it is appropriate to stratify with a certain variable: 
 ```{r, eval = FALSE}
-strata.boosting(data$strata_idx, data$time)
+strata.boosting(data$strata_variable, data$time)
 ```
 
 Plot the coefficient paths: 

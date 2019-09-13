@@ -1,7 +1,7 @@
 Package: SurvBoost
 Type: Package
 Title: Gradient Boosting for Survival Data
-Version: 0.1.1
+Version: 0.1.2
 Author: Emily Morris, Kevin He, Yanming Li, Yi Li, Jian Kang
 Maintainer: Emily Morris <emorrisl@umich.edu>
 Description: Gradient boosting for optimizing loss functions of different types of survival data, 

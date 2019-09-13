@@ -4,7 +4,7 @@
 \alias{boosting_core}
 \title{Boosting core function}
 \usage{
-boosting_core(formula, data, rate, control = 500,
+boosting_core(formula, data, rate, num_iter = 500,
   control_method = NULL, control_parameter = NULL,
   censoring_type = "right")
 }
@@ -16,15 +16,24 @@ function.}
 
 \item{rate}{the desired update rate used in the boosting algorithm.}
 
-\item{control}{an integer used as the number of iterations of the boosting
+\item{num_iter}{an integer used as the number of iterations of the boosting
 algorithm. Default value is 500.}
 
 \item{control_method}{specifies stopping method, options include: cv,
 num_selected, likelihood, BIC, AIC. Default is NULL, which will use a fixed
-number of iterations as specified by control.}
+number of iterations as specified by num_iter.}
 
-\item{control_parameter}{provides the parameter needed for each corresponding
-control_method option.}
+\item{control_parameter}{is a list with the parameter(s) needed for each 
+corresponding control_method option, the options are "cv_folds", "early_stop", 
+"EBIC_gamma", "num_select", and "likelihood_tol." For cv method "cv_folds" 
+specifies the number of cross validation folds (default is 10). For EBIC and 
+AIC methods, "early_stop" is a TRUE/FALSE value for early stopping (default is FALSE). 
+An additional parameter for the EBIC method is "EBIC_gamma" that is used to 
+specify the penalty term, should be a value between 0 and 1. If using 
+num_selected method, "num_select" will be the desired number of variables to 
+select, should be an integer. If using likelihood as the method, 
+"likelihood_tol" will be the small change in likelihood in which to stop 
+once reached (default is 0.001).}
 
 \item{censoring_type}{currently only right censoring is implemented.}
 }
@@ -41,8 +50,9 @@ This function allows you to use gradient boosting for variable selection.
 data <- simulate_survival_cox(true_beta=c(1,1,1,1,1,0,0,0,0,0))
 formula <- as.formula("Surv(time,delta) ~ strata(strata_idx) + V1 + V2 + 
 V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10" )
-boosting_core(formula, data, rate=0.1, control=500)
-boosting_core(formula, data, rate=0.1, control_method="num_selected", control_parameter=5)
+boosting_core(formula, data, rate=0.1, num_iter=500)
+boosting_core(formula, data, rate=0.1, control_method="num_selected",
+control_parameter=list(num_select = 5))
 
 }
 \keyword{boosting}

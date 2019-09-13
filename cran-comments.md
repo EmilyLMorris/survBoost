@@ -1,8 +1,9 @@
 ## Resubmission  
 In this version I have:
 
-* Fixed a bug found in the cross validation code. 
-* Updated README to include a clearer description and example. 
+* Fixed a bug found in the predict.boosting function. 
+* Updated description of parameters for boosting_core function. 
+* Merged modelfit and summary functions into one function, summary.boosting. 
 
 ## Test environments
 * local OS X install, R 3.5.1

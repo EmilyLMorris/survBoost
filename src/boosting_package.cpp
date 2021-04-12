@@ -1,4 +1,3 @@
-# include <RcppParallel.h>
 # include <RcppArmadillo.h>
 # include <sys/time.h>
 # include <vector>
@@ -12,7 +11,7 @@
 
 using namespace std;
 using namespace Rcpp;
-// [[Rcpp::depends(RcppParallel, RcppArmadillo)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::plugins(cpp11)]]
 

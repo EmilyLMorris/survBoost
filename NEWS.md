@@ -1,3 +1,7 @@
+# SurvBoost 0.1.3
+
+Removed an (unused) dependency on RcppParallel.
+
 # SurvBoost 0.1.1
 
 No major changes to report yet. 

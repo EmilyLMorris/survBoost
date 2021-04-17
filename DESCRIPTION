@@ -1,7 +1,7 @@
 Package: SurvBoost
 Type: Package
 Title: Gradient Boosting for Survival Data
-Version: 0.1.2
+Version: 0.1.3
 Author: Emily Morris, Kevin He, Yanming Li, Yi Li, Jian Kang
 Maintainer: Emily Morris <emorrisl@umich.edu>
 Description: Gradient boosting for optimizing loss functions of different types of survival data, 
@@ -9,8 +9,7 @@ Description: Gradient boosting for optimizing loss functions of different types 
   Emily Morris, Kevin He, Yanming Li, Yi Li, Jian Kang (2018) <arXiv:1803.07715> see for 
   description of methods. 
 License: GPL-3
-LazyData: TRUE
-LinkingTo: Rcpp, RcppArmadillo, RcppParallel
+LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.1.1
 Imports: Rcpp, mvtnorm, ggplot2, plyr, reshape2, directlabels 
 NeedsCompilation: yes

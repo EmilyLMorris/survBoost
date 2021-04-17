@@ -1,4 +1,4 @@
-# SurvBoost 0.1.1
+# SurvBoost 0.1.2
 
 No major changes to report yet. 
 
@@ -7,4 +7,5 @@ No major changes to report yet.
 ## Bug fixes
 
 * Updated cross validation code to address a bug. 
+* Updated predict.boosting to address a bug. 
 

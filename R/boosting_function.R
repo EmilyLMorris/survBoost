@@ -23,10 +23,10 @@ globalVariables(c("value", "variable", "terms", "strata"))
 #' "likelihood_tol" will be the small change in likelihood in which to stop 
 #' once reached (default is 0.001). 
 #' @param censoring_type currently only right censoring is implemented. 
-#' @return a list containing the vector of coefficients (beta), variable
+#' @return a list containing the vector of coefficients ("beta"), variable
 #'   selection matrix that contains the coefficients at each iteration
-#'   (selection_df), the number of boosting iterations (mstop), and other
-#'   stopping criteria if applicable to selected method.
+#'   ("selection_df"), the number of boosting iterations ("mstop"), and other
+#'   stopping criteria if applicable to selected method. If using method BIC or AIC, the information criteria for each iteration is returned as a vector ("Information Criteria"). If using cross validation for stopping the criteria used for stopping is returned as a numeric vector ("cvrisk"). 
 #' @keywords gradient boosting
 #' @export
 #' @examples

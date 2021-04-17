@@ -1,12 +1,11 @@
 ## Resubmission  
 In this version I have:
 
-* Fixed a bug found in the predict.boosting function. 
-* Updated description of parameters for boosting_core function. 
-* Merged modelfit and summary functions into one function, summary.boosting. 
+* Removed dependency on RcppParallel. 
+* Removed LazyData from DESCRIPTION file. 
 
 ## Test environments
-* local OS X install, R 3.5.1
+* local OS X install, R 3.6.1
 * ubuntu 14.04 (on travis-ci), R 3.5.2
 * win-builder (release)
 

@@ -38,10 +38,10 @@ once reached (default is 0.001).}
 \item{censoring_type}{currently only right censoring is implemented.}
 }
 \value{
-a list containing the vector of coefficients (beta), variable
+a list containing the vector of coefficients ("beta"), variable
   selection matrix that contains the coefficients at each iteration
-  (selection_df), the number of boosting iterations (mstop), and other
-  stopping criteria if applicable to selected method.
+  ("selection_df"), the number of boosting iterations ("mstop"), and other
+  stopping criteria if applicable to selected method. If using method BIC or AIC, the information criteria for each iteration is returned as a vector ("Information Criteria"). If using cross validation for stopping the criteria used for stopping is returned as a numeric vector ("cvrisk").
 }
 \description{
 This function allows you to use gradient boosting for variable selection.

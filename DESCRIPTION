@@ -10,8 +10,8 @@ Description: Gradient boosting for optimizing loss functions of different types 
   description of methods. 
 License: GPL-3
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Imports: Rcpp, mvtnorm, ggplot2, plyr, reshape2, directlabels 
 NeedsCompilation: yes
 Packaged: 2018-01-31 14:16:36 UTC
-Depends: R (>= 2.10), survival
+Depends: R (>= 3.50), survival

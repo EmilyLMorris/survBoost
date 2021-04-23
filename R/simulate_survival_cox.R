@@ -2,7 +2,7 @@
 ### function for simulating survival data ###
 #############################################
 
-require(mvtnorm)
+#require(mvtnorm)
 
 #' Simulating survival data
 #'

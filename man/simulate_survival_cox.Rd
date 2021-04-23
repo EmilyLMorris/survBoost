@@ -4,12 +4,22 @@
 \alias{simulate_survival_cox}
 \title{Simulating survival data}
 \usage{
-simulate_survival_cox(true_beta, base_hazard = "auto",
-  base_hazard_scale = NULL, base_hazard_shape = NULL,
-  num_strata = 10, input_strata_size = 50, z_matrix = NULL,
-  cov_structure = "diag", block_size = 1, rho = NULL,
-  censor_dist = "unif", censor_const = 5, tau = Inf,
-  normalized = F)
+simulate_survival_cox(
+  true_beta,
+  base_hazard = "auto",
+  base_hazard_scale = NULL,
+  base_hazard_shape = NULL,
+  num_strata = 10,
+  input_strata_size = 50,
+  z_matrix = NULL,
+  cov_structure = "diag",
+  block_size = 1,
+  rho = NULL,
+  censor_dist = "unif",
+  censor_const = 5,
+  tau = Inf,
+  normalized = F
+)
 }
 \arguments{
 \item{true_beta}{Contains true parameter values to simulate from.}

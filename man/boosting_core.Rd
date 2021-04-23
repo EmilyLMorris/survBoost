@@ -4,9 +4,15 @@
 \alias{boosting_core}
 \title{Boosting core function}
 \usage{
-boosting_core(formula, data, rate, num_iter = 500,
-  control_method = NULL, control_parameter = NULL,
-  censoring_type = "right")
+boosting_core(
+  formula,
+  data,
+  rate,
+  num_iter = 500,
+  control_method = NULL,
+  control_parameter = NULL,
+  censoring_type = "right"
+)
 }
 \arguments{
 \item{formula}{a formula object with a response value using the Surv

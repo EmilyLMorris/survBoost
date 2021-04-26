@@ -43,6 +43,6 @@ plot.boosting(boosting_core.output, type="coefficients")
 
 ### Methods description
 
-[SurvBoost: An R Package for High-Dimensional Variable Selection in the Stratified Proportional Hazards Model via Gradient Boosting](https://arxiv.org/abs/1803.07715)
+[SurvBoost: An R Package for High-Dimensional Variable Selection in the Stratified Proportional Hazards Model via Gradient Boosting](https://journal.r-project.org/archive/2020/RJ-2020-018/index.html)
 
 [![Travis build status](https://travis-ci.org/EmilyLMorris/survBoost.svg?branch=master)](https://travis-ci.org/EmilyLMorris/survBoost)
